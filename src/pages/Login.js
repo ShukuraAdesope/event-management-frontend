@@ -32,11 +32,16 @@ function Login() {
 
       const res = await API.post("/auth/login", user);
 
+      // store token
       localStorage.setItem("token", res.data.token);
 
       alert("Login successful");
 
-      navigate("/"); // go to dashboard
+      // redirect to dashboard
+      navigate("/", { replace: true });
+
+      // force navbar update immediately
+      window.location.reload();
 
     }
     catch {
@@ -75,6 +80,7 @@ function Login() {
           name="email"
           placeholder="Email"
           onChange={handleChange}
+          required
         />
 
         <input
@@ -82,6 +88,7 @@ function Login() {
           type="password"
           placeholder="Password"
           onChange={handleChange}
+          required
         />
 
         <button>Login</button>

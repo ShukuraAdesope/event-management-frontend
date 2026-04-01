@@ -4,22 +4,24 @@ import { useState, useEffect } from "react";
 function Navbar() {
 
   const navigate = useNavigate();
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [token, setToken] = useState(null);
+
+  // check token whenever page loads
+  useEffect(() => {
+    setToken(localStorage.getItem("token"));
+  });
 
   const logout = () => {
+
     localStorage.removeItem("token");
 
-    setToken(null); // update navbar immediately
+    setToken(null);
 
     navigate("/login", {
       state: { message: "Logout successful!" }
     });
-  };
 
-  // keep navbar updated if token changes
-  useEffect(() => {
-    setToken(localStorage.getItem("token"));
-  }, []);
+  };
 
   return (
 
