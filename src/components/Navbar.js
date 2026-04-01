@@ -1,22 +1,30 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 function Navbar() {
 
-  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+  const [token, setToken] = useState(localStorage.getItem("token"));
 
   const logout = () => {
-
     localStorage.removeItem("token");
 
-    window.location.href = "/login";
+    setToken(null); // update navbar immediately
 
+    navigate("/login", {
+      state: { message: "Logout successful!" }
+    });
   };
+
+  // keep navbar updated if token changes
+  useEffect(() => {
+    setToken(localStorage.getItem("token"));
+  }, []);
 
   return (
 
     <nav>
 
-      {/* NEW LOGO */}
       <h2>📅 MERN Mavericks</h2>
 
       <div>

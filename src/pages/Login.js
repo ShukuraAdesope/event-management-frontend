@@ -1,30 +1,30 @@
 import { useState } from "react";
-
+import { useNavigate, useLocation } from "react-router-dom";
 import API from "../services/api";
 
 function Login() {
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [user, setUser] = useState({
-
     email: "",
-
     password: ""
-
   });
 
-  const handleChange = e => {
+  // message coming from logout
+  const message = location.state?.message;
+
+  const handleChange = (e) => {
 
     setUser({
-
       ...user,
-
       [e.target.name]: e.target.value
-
     });
 
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
 
     e.preventDefault();
 
@@ -36,9 +36,10 @@ function Login() {
 
       alert("Login successful");
 
-      window.location.href = "/";
+      navigate("/"); // go to dashboard
 
-    } catch {
+    }
+    catch {
 
       alert("Login failed");
 
@@ -52,28 +53,35 @@ function Login() {
 
       <h2>Login</h2>
 
+      {/* logout success message */}
+      {message && (
+
+        <p
+          style={{
+            color: "green",
+            backgroundColor: "#e6ffe6",
+            padding: "10px",
+            borderRadius: "5px"
+          }}
+        >
+          {message}
+        </p>
+
+      )}
+
       <form onSubmit={handleSubmit}>
 
         <input
-
           name="email"
-
           placeholder="Email"
-
           onChange={handleChange}
-
         />
 
         <input
-
           name="password"
-
           type="password"
-
           placeholder="Password"
-
           onChange={handleChange}
-
         />
 
         <button>Login</button>
