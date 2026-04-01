@@ -1,149 +1,111 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import API from "../services/api";
 
-function EditEvent() {
+function Dashboard() {
 
-  const { id } = useParams();
+  const [events, setEvents] = useState([]);
 
-  const navigate = useNavigate();
-
-  const [event, setEvent] = useState({
-
-    title: "",
-    description: "",
-    date: ""
-
-  });
-
-  const [loading, setLoading] = useState(true);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
 
-    const loadEvent = async () => {
+    fetchEvents();
 
-      try {
+  }, []);
 
-        const res = await API.get("/events/" + id);
-
-        setEvent({
-
-          title: res.data.title,
-
-          description: res.data.description,
-
-          date: res.data.date.substring(0,10)
-
-        });
-
-        setLoading(false);
-
-      } catch (error) {
-
-        console.log(error);
-
-        alert("Error loading event");
-
-        navigate("/");
-
-      }
-
-    };
-
-    loadEvent();
-
-  }, [id, navigate]);
-
-
-
-  const handleChange = e => {
-
-    setEvent({
-
-      ...event,
-
-      [e.target.name]: e.target.value
-
-    });
-
-  };
-
-
-
-  const handleSubmit = async e => {
-
-    e.preventDefault();
+  const fetchEvents = async () => {
 
     try {
 
-      await API.put("/events/" + id, event);
+      const res = await API.get("/events");
 
-      alert("Event updated successfully");
-
-      navigate("/");
+      setEvents(res.data);
 
     } catch (error) {
 
       console.log(error);
 
-      alert("Update failed");
+    }
+
+  };
+
+  const deleteEvent = async id => {
+
+    try {
+
+      await API.delete("/events/" + id);
+
+      fetchEvents();
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert("Delete failed");
 
     }
 
   };
 
-
-
-  if (loading) {
-
-    return (
-
-      <div className="container">
-
-        <h2>Loading event...</h2>
-
-      </div>
-
-    );
-
-  }
-
-
-
   return (
 
     <div className="container">
 
-      <h2>Edit Event</h2>
+      <h2>Event Dashboard</h2>
 
-      <form onSubmit={handleSubmit}>
+      {events.length === 0 && (
 
-        <input
-          name="title"
-          value={event.title}
-          onChange={handleChange}
-          required
-        />
+        <p>No events created yet.</p>
 
-        <input
-          name="description"
-          value={event.description}
-          onChange={handleChange}
-          required
-        />
+      )}
 
-        <input
-          type="date"
-          name="date"
-          value={event.date}
-          onChange={handleChange}
-          required
-        />
+      {events.map(e => (
 
-        <button>Update Event</button>
+        <div className="event-card" key={e._id}>
 
-      </form>
+          <h3>{e.title}</h3>
+
+          <p>{e.description}</p>
+
+          <p>
+            { new Date(e.date).toISOString().split("T")[0] }
+          </p>
+
+          {token && (
+
+            <>
+
+              <Link to={"/edit/" + e._id}>
+
+                <button className="edit-btn">
+
+                  Edit
+
+                </button>
+
+              </Link>
+
+              <button
+
+                className="delete-btn"
+
+                onClick={() => deleteEvent(e._id)}
+
+              >
+
+                Delete
+
+              </button>
+
+            </>
+
+          )}
+
+        </div>
+
+      ))}
 
     </div>
 
@@ -151,4 +113,4 @@ function EditEvent() {
 
 }
 
-export default EditEvent;
+export default Dashboard;
