@@ -1,32 +1,31 @@
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 import API from "../services/api";
 
 function Register() {
 
+  const navigate = useNavigate();
+
   const [user, setUser] = useState({
 
     username: "",
-
     email: "",
-
     password: ""
 
   });
 
-  const handleChange = e => {
+  const handleChange = (e) => {
 
     setUser({
 
       ...user,
-
       [e.target.name]: e.target.value
 
     });
 
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
 
     e.preventDefault();
 
@@ -34,11 +33,17 @@ function Register() {
 
       await API.post("/auth/register", user);
 
-      alert("Registered successfully");
+      alert("Registered successfully!");
 
-      window.location.href = "/login";
+      // redirect to login page
+      navigate("/login", {
+        state: { message: "Registration successful! Please login." }
+      });
 
-    } catch (error) {
+    }
+    catch (error) {
+
+      console.log(error);
 
       alert("Registration error");
 
@@ -55,38 +60,30 @@ function Register() {
       <form onSubmit={handleSubmit}>
 
         <input
-
           name="username"
-
           placeholder="Username"
-
           onChange={handleChange}
-
+          required
         />
 
         <input
-
           name="email"
-
           placeholder="Email"
-
           onChange={handleChange}
-
+          required
         />
 
         <input
-
           name="password"
-
           type="password"
-
           placeholder="Password"
-
           onChange={handleChange}
-
+          required
         />
 
-        <button>Register</button>
+        <button>
+          Register
+        </button>
 
       </form>
 

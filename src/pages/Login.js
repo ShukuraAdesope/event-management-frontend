@@ -12,7 +12,7 @@ function Login() {
     password: ""
   });
 
-  // message coming from logout
+  // message from logout or registration
   const message = location.state?.message;
 
   const handleChange = (e) => {
@@ -35,16 +35,18 @@ function Login() {
       // store token
       localStorage.setItem("token", res.data.token);
 
-      alert("Login successful");
+      alert("Login successful!");
 
       // redirect to dashboard
       navigate("/", { replace: true });
 
-      // force navbar update immediately
+      // refresh so Navbar updates immediately
       window.location.reload();
 
     }
-    catch {
+    catch (error) {
+
+      console.log(error);
 
       alert("Login failed");
 
@@ -58,7 +60,7 @@ function Login() {
 
       <h2>Login</h2>
 
-      {/* logout success message */}
+      {/* message display (logout or registration) */}
       {message && (
 
         <p
@@ -66,7 +68,8 @@ function Login() {
             color: "green",
             backgroundColor: "#e6ffe6",
             padding: "10px",
-            borderRadius: "5px"
+            borderRadius: "5px",
+            marginBottom: "15px"
           }}
         >
           {message}
@@ -91,7 +94,9 @@ function Login() {
           required
         />
 
-        <button>Login</button>
+        <button>
+          Login
+        </button>
 
       </form>
 
