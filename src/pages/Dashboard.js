@@ -1,29 +1,20 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import API from "../services/api";
 
 function Dashboard() {
 
   const [events, setEvents] = useState([]);
-
-  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
 
   const token = localStorage.getItem("token");
 
   useEffect(() => {
 
-    if (!token) {
-
-      navigate("/login");
-
-      return;
-
-    }
-
     fetchEvents();
 
-  }, [token, navigate]);
+  }, []);
 
 
 
@@ -50,7 +41,7 @@ function Dashboard() {
 
   const deleteEvent = async (id) => {
 
-    const confirmDelete = window.confirm("Delete this event?");
+    const confirmDelete = window.confirm("Are you sure you want to delete this event?");
 
     if (!confirmDelete) return;
 
@@ -73,55 +64,88 @@ function Dashboard() {
 
 
 
+  // filter events based on search
+  const filteredEvents = events.filter(e =>
+    e.title.toLowerCase().includes(search.toLowerCase())
+  );
+
+
+
   return (
 
     <div className="container">
 
       <h2>Event Dashboard</h2>
 
-      {events.length === 0 && (
+      {/* search bar */}
+      <input
+        type="text"
+        placeholder="Search events..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        style={{
+          marginBottom: "20px",
+          padding: "8px",
+          width: "100%",
+          borderRadius: "5px",
+          border: "1px solid #ccc"
+        }}
+      />
 
-        <p>No events created yet.</p>
+      {filteredEvents.length === 0 && (
+
+        <p>No events found.</p>
 
       )}
 
-      {events.map((e) => (
+      {filteredEvents.map((e) => (
 
-        <div className="event-card" key={e._id}>
+        <div
+          className="event-card"
+          key={e._id}
+          style={{
+            padding: "15px",
+            marginBottom: "15px",
+            borderRadius: "8px",
+            boxShadow: "0 2px 5px rgba(0,0,0,0.1)"
+          }}
+        >
 
           <h3>{e.title}</h3>
 
           <p>{e.description}</p>
 
           <p>
-            {new Date(e.date).toISOString().split("T")[0]}
+            <strong>Date:</strong>{" "}
+            {new Date(e.date).toLocaleDateString()}
           </p>
 
-          <div>
+          {/* only logged in users can edit/delete */}
+          {token && (
 
-            <Link to={`/edit/${e._id}`}>
+            <div style={{ marginTop: "10px" }}>
 
-              <button className="edit-btn">
+              <Link to={`/edit/${e._id}`}>
 
-                Edit
+                <button
+                  className="edit-btn"
+                  style={{ marginRight: "10px" }}
+                >
+                  Edit
+                </button>
 
+              </Link>
+
+              <button
+                className="delete-btn"
+                onClick={() => deleteEvent(e._id)}
+              >
+                Delete
               </button>
 
-            </Link>
+            </div>
 
-            <button
-
-              className="delete-btn"
-
-              onClick={() => deleteEvent(e._id)}
-
-            >
-
-              Delete
-
-            </button>
-
-          </div>
+          )}
 
         </div>
 

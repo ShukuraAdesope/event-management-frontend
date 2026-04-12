@@ -85,7 +85,7 @@ function EditEvent() {
 
       await API.put(`/events/${id}`, event);
 
-      alert("Event updated successfully");
+      alert("Event updated successfully!");
 
       navigate("/");
 
@@ -131,6 +131,12 @@ function EditEvent() {
           value={event.title}
           onChange={handleChange}
           required
+          style={{
+            marginBottom: "10px",
+            padding: "8px",
+            width: "100%",
+            borderRadius: "5px"
+          }}
         />
 
         <input
@@ -138,6 +144,12 @@ function EditEvent() {
           value={event.description}
           onChange={handleChange}
           required
+          style={{
+            marginBottom: "10px",
+            padding: "8px",
+            width: "100%",
+            borderRadius: "5px"
+          }}
         />
 
         <input
@@ -146,9 +158,25 @@ function EditEvent() {
           value={event.date}
           onChange={handleChange}
           required
+          style={{
+            marginBottom: "15px",
+            padding: "8px",
+            width: "100%",
+            borderRadius: "5px"
+          }}
         />
 
-        <button type="submit">
+        <button
+          type="submit"
+          style={{
+            padding: "10px",
+            borderRadius: "6px",
+            backgroundColor: "#ff4da6",
+            color: "white",
+            border: "none",
+            cursor: "pointer"
+          }}
+        >
           Update Event
         </button>
 

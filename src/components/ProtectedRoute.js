@@ -6,7 +6,13 @@ function ProtectedRoute({ children }) {
 
   if (!token) {
 
-    return <Navigate to="/login" />;
+    return (
+      <Navigate
+        to="/login"
+        state={{ message: "Please login to continue" }}
+        replace
+      />
+    );
 
   }
 

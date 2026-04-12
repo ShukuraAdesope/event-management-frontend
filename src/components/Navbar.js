@@ -9,7 +9,7 @@ function Navbar() {
   // check token whenever page loads
   useEffect(() => {
     setToken(localStorage.getItem("token"));
-  });
+  }, []);
 
   const logout = () => {
 
@@ -25,21 +25,82 @@ function Navbar() {
 
   return (
 
-    <nav>
+    <nav
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "15px 20px",
+        backgroundColor: "#ff4da6",
+        color: "white"
+      }}
+    >
 
-      <h2>📅 MERN Mavericks</h2>
+      <h2 style={{ margin: 0 }}>
+        📅 MERN Mavericks
+      </h2>
 
-      <div>
+      <div
+        style={{
+          display: "flex",
+          gap: "15px",
+          alignItems: "center"
+        }}
+      >
 
-        {!token && <Link to="/login">Login</Link>}
+        {!token && (
+          <Link
+            to="/login"
+            style={{ color: "white", textDecoration: "none" }}
+          >
+            Login
+          </Link>
+        )}
 
-        {!token && <Link to="/register">Register</Link>}
+        {!token && (
+          <Link
+            to="/register"
+            style={{ color: "white", textDecoration: "none" }}
+          >
+            Register
+          </Link>
+        )}
 
-        {token && <Link to="/">Dashboard</Link>}
+        {token && (
+          <Link
+            to="/"
+            style={{ color: "white", textDecoration: "none" }}
+          >
+            Dashboard
+          </Link>
+        )}
 
-        {token && <Link to="/add">Add Event</Link>}
+        {token && (
+          <Link
+            to="/add"
+            style={{ color: "white", textDecoration: "none" }}
+          >
+            Add Event
+          </Link>
+        )}
 
-        {token && <button onClick={logout}>Logout</button>}
+        {token && (
+
+          <button
+            onClick={logout}
+            style={{
+              backgroundColor: "white",
+              color: "#ff4da6",
+              border: "none",
+              padding: "6px 12px",
+              borderRadius: "5px",
+              cursor: "pointer"
+            }}
+          >
+            Logout
+          </button>
+
+        )}
 
       </div>
 
