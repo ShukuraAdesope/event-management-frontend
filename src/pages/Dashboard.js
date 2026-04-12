@@ -117,7 +117,7 @@ function Dashboard() {
 
           <p>
             <strong>Date:</strong>{" "}
-            {new Date(e.date).toLocaleDateString()}
+            {e.date ? e.date.split("T")[0] : ""}
           </p>
 
           {/* only logged in users can edit/delete */}
