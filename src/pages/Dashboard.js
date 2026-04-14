@@ -8,6 +8,7 @@ function Dashboard() {
   const [events, setEvents] = useState([]);
   const [search, setSearch] = useState("");
 
+  // check if user logged in
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -64,9 +65,9 @@ function Dashboard() {
 
 
 
-  // filter events based on search
-  const filteredEvents = events.filter(e =>
-    e.title.toLowerCase().includes(search.toLowerCase())
+  // search filter
+  const filteredEvents = events.filter(event =>
+    event.title.toLowerCase().includes(search.toLowerCase())
   );
 
 
@@ -77,7 +78,7 @@ function Dashboard() {
 
       <h2>Event Dashboard</h2>
 
-      {/* search bar */}
+      {/* search */}
       <input
         type="text"
         placeholder="Search events..."
@@ -92,17 +93,20 @@ function Dashboard() {
         }}
       />
 
+
+
       {filteredEvents.length === 0 && (
 
         <p>No events found.</p>
 
       )}
 
-      {filteredEvents.map((e) => (
+
+
+      {filteredEvents.map(event => (
 
         <div
-          className="event-card"
-          key={e._id}
+          key={event._id}
           style={{
             padding: "15px",
             marginBottom: "15px",
@@ -111,35 +115,33 @@ function Dashboard() {
           }}
         >
 
-          <h3>{e.title}</h3>
+          <h3>{event.title}</h3>
 
-          <p>{e.description}</p>
+          <p>{event.description}</p>
 
           <p>
             <strong>Date:</strong>{" "}
-            {e.date ? e.date.split("T")[0] : ""}
+            {event.date ? event.date.split("T")[0] : ""}
           </p>
 
-          {/* only logged in users can edit/delete */}
+
+
+          {/* show buttons ONLY if logged in */}
           {token && (
 
             <div style={{ marginTop: "10px" }}>
 
-              <Link to={`/edit/${e._id}`}>
+              <Link to={`/edit/${event._id}`}>
 
-                <button
-                  className="edit-btn"
-                  style={{ marginRight: "10px" }}
-                >
+                <button style={{ marginRight: "10px" }}>
                   Edit
                 </button>
 
               </Link>
 
-              <button
-                className="delete-btn"
-                onClick={() => deleteEvent(e._id)}
-              >
+
+
+              <button onClick={() => deleteEvent(event._id)}>
                 Delete
               </button>
 
