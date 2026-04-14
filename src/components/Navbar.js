@@ -4,11 +4,23 @@ import { useState, useEffect } from "react";
 function Navbar() {
 
   const navigate = useNavigate();
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem("token"));
 
-  // check token whenever page loads
+  // keep navbar updated when login/logout happens
   useEffect(() => {
-    setToken(localStorage.getItem("token"));
+
+    const checkToken = () => {
+      setToken(localStorage.getItem("token"));
+    };
+
+    checkToken();
+
+    window.addEventListener("storage", checkToken);
+
+    return () => {
+      window.removeEventListener("storage", checkToken);
+    };
+
   }, []);
 
   const logout = () => {
@@ -17,9 +29,8 @@ function Navbar() {
 
     setToken(null);
 
-    navigate("/login", {
-      state: { message: "Logout successful!" }
-    });
+    // redirect to dashboard after logout
+    navigate("/");
 
   };
 

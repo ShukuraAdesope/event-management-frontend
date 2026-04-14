@@ -1,21 +1,34 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
 import API from "../services/api";
 
 function Dashboard() {
 
   const [events, setEvents] = useState([]);
   const [search, setSearch] = useState("");
+  const [token, setToken] = useState(localStorage.getItem("token"));
 
-  // check if user logged in
-  const token = localStorage.getItem("token");
+  // update token when login/logout happens
+  useEffect(() => {
 
+    const checkToken = () => {
+      setToken(localStorage.getItem("token"));
+    };
+
+    window.addEventListener("storage", checkToken);
+
+    return () => {
+      window.removeEventListener("storage", checkToken);
+    };
+
+  }, []);
+
+  // always fetch events (public access allowed)
   useEffect(() => {
 
     fetchEvents();
 
-  }, []);
+  }, [token]);
 
 
 
@@ -27,12 +40,9 @@ function Dashboard() {
 
       setEvents(res.data);
 
-    }
-    catch (error) {
+    } catch (error) {
 
-      console.log(error);
-
-      alert("Error loading events");
+      console.log("Error loading events", error);
 
     }
 
@@ -42,7 +52,7 @@ function Dashboard() {
 
   const deleteEvent = async (id) => {
 
-    const confirmDelete = window.confirm("Are you sure you want to delete this event?");
+    const confirmDelete = window.confirm("Delete this event?");
 
     if (!confirmDelete) return;
 
@@ -52,10 +62,7 @@ function Dashboard() {
 
       fetchEvents();
 
-    }
-    catch (error) {
-
-      console.log(error);
+    } catch (error) {
 
       alert("Delete failed");
 
@@ -65,7 +72,7 @@ function Dashboard() {
 
 
 
-  // search filter
+  // search works for public users
   const filteredEvents = events.filter(event =>
     event.title.toLowerCase().includes(search.toLowerCase())
   );
@@ -78,18 +85,17 @@ function Dashboard() {
 
       <h2>Event Dashboard</h2>
 
-      {/* search */}
+      {/* PUBLIC SEARCH */}
       <input
         type="text"
         placeholder="Search events..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         style={{
-          marginBottom: "20px",
+          marginBottom: "15px",
           padding: "8px",
           width: "100%",
-          borderRadius: "5px",
-          border: "1px solid #ccc"
+          borderRadius: "5px"
         }}
       />
 
@@ -97,7 +103,7 @@ function Dashboard() {
 
       {filteredEvents.length === 0 && (
 
-        <p>No events found.</p>
+        <p>No events created yet.</p>
 
       )}
 
@@ -108,10 +114,10 @@ function Dashboard() {
         <div
           key={event._id}
           style={{
-            padding: "15px",
             marginBottom: "15px",
-            borderRadius: "8px",
-            boxShadow: "0 2px 5px rgba(0,0,0,0.1)"
+            padding: "10px",
+            border: "1px solid #eee",
+            borderRadius: "6px"
           }}
         >
 
@@ -120,29 +126,30 @@ function Dashboard() {
           <p>{event.description}</p>
 
           <p>
-            <strong>Date:</strong>{" "}
+
             {event.date ? event.date.split("T")[0] : ""}
+
           </p>
 
 
 
-          {/* show buttons ONLY if logged in */}
+          {/* only visible when logged in */}
           {token && (
 
-            <div style={{ marginTop: "10px" }}>
+            <div>
 
               <Link to={`/edit/${event._id}`}>
 
-                <button style={{ marginRight: "10px" }}>
-                  Edit
-                </button>
+                <button>Edit</button>
 
               </Link>
 
 
 
               <button onClick={() => deleteEvent(event._id)}>
+
                 Delete
+
               </button>
 
             </div>
